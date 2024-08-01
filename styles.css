@@ -41,7 +41,7 @@ form .prioInput {
   display: flex;
   margin: 0 0.5rem;
   flex-direction: row;
-  min-width: 500x;
+  min-width: 500px;
   
 }
 
@@ -200,3 +200,8 @@ select {
 .todo.high {
   border-left: 5px solid red;
 }
+
+/* 
+Forked of code-along project by OneCode Camp 
+by Yatt-code 
+*/
