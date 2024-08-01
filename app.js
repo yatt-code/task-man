@@ -63,7 +63,7 @@ function addTodo(event) {
 
   // Add a data attribute to store the priority (for later use)
   todoDiv.dataset.priority = selectedPriority;
-
+  
   // Save task with priority to local storage
   saveLocalTodos({ text: todoInput.value, priority: selectedPriority }); // Save as object
 }
@@ -74,6 +74,7 @@ function deleteCheck(e) {
   // Delete Todo
   if (item.classList[0] === "trash-btn") {
     const todo = item.parentElement;
+    removeLocalTodos(todo);
     todo.classList.add("fall");
     todo.addEventListener("transitionend", function () {
       todo.remove();
