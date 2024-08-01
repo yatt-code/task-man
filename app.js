@@ -20,12 +20,14 @@ todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("click", filterTodo);
 priorityFilter.addEventListener("click", filterTodo);
 
+
+
 // Functions
 
 function addTodo(event) {
   // Prevent form from submitting
   event.preventDefault();
-  
+
   // Todo DIV
   const todoDiv = document.createElement("div");
   todoDiv.classList.add("todo");
@@ -51,21 +53,22 @@ function addTodo(event) {
   // Append to List
   todoList.appendChild(todoDiv);
 
-  // Clear Todo Input Value
-  todoInput.value = "";
-
+  
   // Get Selected Priority
   const prioritySelect = document.querySelector(".filter-priority");
   const selectedPriority = prioritySelect.value; // Get the selected value
-
+  
   // Add Priority Class
   todoDiv.classList.add(selectedPriority);
-
+  
   // Add a data attribute to store the priority (for later use)
   todoDiv.dataset.priority = selectedPriority;
   
-  // Save task with priority to local storage
-  saveLocalTodos({ text: todoInput.value, priority: selectedPriority }); // Save as object
+  // Add Priority to Local Storage
+  saveLocalTodos({ text: todoInput.value, priority: selectedPriority });
+
+  // Clear Todo Input Value
+  todoInput.value = "";
 }
 
 function deleteCheck(e) {
@@ -89,83 +92,91 @@ function deleteCheck(e) {
 }
 
 function filterTodo(e) {
-  const todos = todoList.childNodes;
+  const todos = Array.from(todoList.children);
   todos.forEach(function (todo) {
-    const todoPriority = todo.dataset.priority;
+    if (todo.nodeType === Node.ELEMENT_NODE) {
+      const todoPriority = todo.dataset.priority;
 
-    if (e.target.classList.contains("filter-todo")) {
-      // Filter by completion status
-      switch (e.target.value) {
-        case "all":
+      if (e.target.classList.contains("filter-todo")) {
+        // Filter by completion status
+        switch (e.target.value) {
+          case "all":
+            todo.style.display = "flex";
+            break;
+          case "completed":
+            todo.style.display = todo.classList.contains("completed")
+              ? "flex"
+              : "none";
+            break;
+          case "uncompleted":
+            todo.style.display = todo.classList.contains("completed")
+              ? "none"
+              : "flex";
+            break;
+        }
+      } else if (e.target.classList.contains("filter-priority")) {
+        // Filter by priority
+        if (e.target.value === "all" || todoPriority === e.target.value) {
           todo.style.display = "flex";
-          break;
-        case "completed":
-          todo.style.display = todo.classList.contains("completed")
-            ? "flex"
-            : "none";
-          break;
-        case "uncompleted":
-          todo.style.display = todo.classList.contains("completed")
-            ? "none"
-            : "flex";
-          break;
-      }
-    } else if (e.target.classList.contains("filter-priority")) {
-      // Filter by priority
-      if (e.target.value === "all" || todoPriority === e.target.value) {
-        todo.style.display = "flex";
-      } else {
-        todo.style.display = "none";
+        } else {
+          todo.style.display = "none";
+        }
       }
     }
   });
 }
 
 function getTodos() {
-  let todos = JSON.parse(localStorage.getItem("todos")) || [];
-  todos.forEach(function (todo) {
-    
-    // Todo DIV
-    const todoDiv = document.createElement("div");
-    todoDiv.classList.add("todo");
+  // Clear the existing todo list
+  todoList.innerHTML = "";
 
+  let todos = JSON.parse(localStorage.getItem("todos")) || [];
+  console.log("Retrieved todos from local storage:", todos);
+
+  todos.forEach(function (todo) {
     // Create LI
     const newTodo = document.createElement("li");
     newTodo.innerText = todo.text;
     newTodo.classList.add("todo-item");
-    todoDiv.appendChild(newTodo);
+    console.log("Processing todo:", todo);
 
     // Check Mark Button
     const completedButton = document.createElement("button");
     completedButton.innerHTML = '<i class="fas fa-check"></i>';
     completedButton.classList.add("complete-btn");
-    todoDiv.appendChild(completedButton);
+    
 
     // Trash Button
     const trashButton = document.createElement("button");
     trashButton.innerHTML = '<i class="fas fa-trash"></i>';
     trashButton.classList.add("trash-btn");
-    todoDiv.appendChild(trashButton);
+
+    // Todo DIV
+    const todoDiv = document.createElement("div");
+    todoDiv.classList.add("todo");
 
     // Append to List
-    todoList.appendChild(todoDiv);
+    todoDiv.appendChild(newTodo);
+    todoDiv.appendChild(completedButton);
+    todoDiv.appendChild(trashButton);
 
     // Set the priority information:
     if (todo.priority) {
-
-        todoDiv.classList.add(todo.priority); // Add priority class to the todo item
-        todoDiv.dataset.priority = todo.priority; // Set the priority in data-attribute
+      todoDiv.classList.add(todo.priority); // Add priority class to the todo item
+      todoDiv.dataset.priority = todo.priority; // Set the priority in data-attribute
+    } else {
+      todoDiv.classList.add("medium"); // Default priority
+      todoDiv.dataset.priority = "medium"; // Default priority
     }
-    else {
-        todoDiv.classList.add("medium"); // Default priority
-        todoDiv.dataset.priority = "medium"; // Default priority
-    }
-});
+    todoList.appendChild(todoDiv);
+    console.log("Appended todoDiv to todoList");
+  });
 }
 
 // Save todos to local storage
 
 function saveLocalTodos(todo) {
+  console.log("Saving todo:", todo);
   let todos = JSON.parse(localStorage.getItem("todos")) || [];
   todos.push(todo); // Ensure you're pushing the entire todo object
   localStorage.setItem("todos", JSON.stringify(todos));
@@ -183,3 +194,9 @@ function removeLocalTodos(todo) {
 
 // Get todos from local storage
 document.addEventListener("DOMContentLoaded", getTodos);
+
+
+/* 
+Forked of code-along project by OneCode Camp 
+by Yatt-code
+*/
