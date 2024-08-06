@@ -193,7 +193,7 @@ select {
   border-left: 5px solid green;
 }
 
-.todo.medium {
+.todo.normal {
   border-left: 5px solid blueviolet;
 }
 
