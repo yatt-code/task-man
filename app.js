@@ -59,13 +59,13 @@ function addTodo(event) {
   const selectedPriority = prioritySelect.value; // Get the selected value
   
   // Add Priority Class
-  todoDiv.classList.add(selectedPriority);
+  todoDiv.classList.add("normal");
   
   // Add a data attribute to store the priority (for later use)
-  todoDiv.dataset.priority = selectedPriority;
+  todoDiv.dataset.priority = "normal";
   
   // Add Priority to Local Storage
-  saveLocalTodos({ text: todoInput.value, priority: selectedPriority });
+  saveLocalTodos({ text: todoInput.value, priority: "normal" });
 
   // Clear Todo Input Value
   todoInput.value = "";
@@ -162,11 +162,12 @@ function getTodos() {
 
     // Set the priority information:
     if (todo.priority) {
-      todoDiv.classList.add(todo.priority); // Add priority class to the todo item
-      todoDiv.dataset.priority = todo.priority; // Set the priority in data-attribute
+      const priorityClass = todo.priority === "medium" ? "normal" : todo.priority;
+      todoDiv.classList.add(priorityClass); // Add priority class to the todo item
+      todoDiv.dataset.priority = priorityClass; // Set the priority in data-attribute
     } else {
-      todoDiv.classList.add("medium"); // Default priority
-      todoDiv.dataset.priority = "medium"; // Default priority
+      todoDiv.classList.add("normal"); // Default priority
+      todoDiv.dataset.priority = "normal"; // Default priority
     }
     todoList.appendChild(todoDiv);
     console.log("Appended todoDiv to todoList");
